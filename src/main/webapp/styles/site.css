@@ -1,0 +1,81 @@
+/****** css reset start ******/
+html, body, div, span,
+applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+dd, dl, dt, li, ol, ul,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+    border: 0;
+    font-family: inherit;
+    font-size: 100%;
+    font-style: inherit;
+    font-weight: inherit;
+    line-height: 1.2;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    vertical-align: baseline;
+}
+
+a img, :link img, :visited img {
+    border: 0;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+ol, ul {
+    list-style: none;
+}
+
+q:before, q:after,
+blockquote:before, blockquote:after {
+    content: "";
+}
+
+strong {
+    font-weight: bold;
+}
+
+/****** css reset end ******/
+
+html {
+    background-color: #3f3f3f;
+}
+
+body {
+    font-family: "Consolas", "Lucida Console", "Courier New";
+    color: #d7d7c8;
+}
+
+h1 {
+    font-size: 32pt;
+}
+
+h1 span {
+    color: #dac6a5;
+    font-weight: bold;
+}
+
+#main {
+    font-size: 14pt;
+    padding: 0 4em;
+}
+
+#main #rte {
+    min-height: 1.5em;
+}
+
+#main .comment {
+    color: #7d9b7d;
+}
+
+#main .url {
+    font-size: 22pt;
+    padding-bottom: 1em;
+}

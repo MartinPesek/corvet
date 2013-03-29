@@ -5,5 +5,7 @@
 </head>
 <body>
 <h1>${greeting}</h1>
+${base64}<br/>
+${decoded}
 </body>
 </html>

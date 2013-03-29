@@ -1,5 +1,101 @@
+<!DOCTYPE html>
 <html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Orbu File Sharing</title>
+    <link href="styles/site.css" rel="stylesheet" type="text/css"/>
+    <script src="scripts/jquery-1.9.1.min.js" type="text/javascript"></script>
+</head>
 <body>
-<h2>Index Page</h2>
+<h1><span>namespace</span> Orbu.Net.Web.Service.ImageUploading<br/>{</h1>
+
+<div id="main">
+    <div id="url"></div>
+    <div id="form">
+        <div class="comment">// currently works in Chrome and Firefox only</div>
+        <div id="rte" contenteditable="true"></div>
+        <div id="image"></div>
+    </div>
+    <script type="text/javascript">
+        function uploadImage(data) {
+            if (data == null) {
+                console.log("No data loaded from Chrome, trying Firefox way...");
+                data = $("#rte img").attr("src");
+                $("#rte img").remove();
+            }
+
+            if (data == null) {
+                console.log("No data loaded!");
+                return;
+            }
+
+            var image = document.createElement("img");
+            image.src = data;
+
+            $("#image").children().remove();
+            document.getElementById("image").appendChild(image);
+
+            $.ajax({
+                url: 'saveImage.html',
+                type: 'POST',
+                data: "data=" + data,
+                success: function (result) {
+                    if (result == "") {
+                        return;
+                    }
+
+                    $("<div id=\"url-link\" class=\"url\">" + result + "</div>").appendTo("#url");
+                    $("<img src=\"" + result + "\" alt=\"uploaded image\" />").appendTo("#url");
+
+                    $("#form").hide();
+
+                    // select url
+                    var selection = window.getSelection();
+                    if (selection) {
+                        var text = document.getElementById("url-link");
+                        var range = document.createRange();
+
+                        range.selectNodeContents(text);
+
+                        selection.removeAllRanges();
+                        selection.addRange(range);
+                    }
+                },
+                error: function (response) {
+                    $("<div class=\"url\">Error: " + response.responseText + "</div>").appendTo("#url");
+                }
+            });
+        }
+
+        document.getElementById("rte").focus();
+        document.getElementById("rte").onpaste = function (e) {
+            var imageData;
+
+            if (e && e.clipboardData && e.clipboardData.items.length > 0) {
+                var item = e.clipboardData.items[0];
+                if (item.type != "image/png" && item.type != "image/jpeg" && item.type != "image/gif") {
+                    console.log("Not supported type: " + item.type);
+                    return;
+                }
+
+                var fr = new FileReader();
+
+                fr.onload = function (fre) {
+                    imageData = fre.target.result;
+                    console.log("Data loaded from Chrome.");
+                    uploadImage(imageData);
+                };
+
+                fr.readAsDataURL(item.getAsFile());
+            } else {
+                setTimeout(function () {
+                    uploadImage(null);
+                }, 0);
+            }
+        };
+    </script>
+</div>
+
+<h1>}</h1>
 </body>
 </html>
