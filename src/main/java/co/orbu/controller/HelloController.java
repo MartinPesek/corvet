@@ -1,5 +1,6 @@
 package co.orbu.controller;
 
+import co.orbu.utils.StringGenerator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -57,8 +58,7 @@ public class HelloController {
             if (!header[0].toLowerCase().equals("data"))
                 continue;
 
-            switch (header[1])
-            {
+            switch (header[1]) {
                 case "image/png":
                     extension = ".png";
                     break;
@@ -83,7 +83,7 @@ public class HelloController {
         // TODO: this code sucks... Proof of concept though -- improve!
 
         byte[] rawData = DatatypeConverter.parseBase64Binary(base64Data);
-        File file = File.createTempFile("orbu", extension, new File("c:\\Projects\\Servers\\jetty-8\\webapps\\-\\"));
+        File file = new File(new File("c:\\Projects\\Servers\\jetty-8\\webapps\\-\\"), StringGenerator.getRandomString() + extension);
 
         try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(file))) {
             dos.write(rawData, 0, rawData.length);
