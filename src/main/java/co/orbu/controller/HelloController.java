@@ -83,12 +83,12 @@ public class HelloController {
         // TODO: this code sucks... Proof of concept though -- improve!
 
         byte[] rawData = DatatypeConverter.parseBase64Binary(base64Data);
-        File file = new File(new File("c:\\Projects\\Servers\\jetty-8\\webapps\\-\\"), StringGenerator.getRandomString() + extension);
+        File file = new File(new File("/opt/jetty/webapps/ROOT/-"), StringGenerator.getRandomString() + extension);
 
         try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(file))) {
             dos.write(rawData, 0, rawData.length);
         }
 
-        return "http://localhost:8080/-/" + file.getName();
+        return "http://orbu.co/-/" + file.getName();
     }
 }
