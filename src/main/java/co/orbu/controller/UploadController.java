@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 @Controller
-public class HelloController {
+public class UploadController {
 
     @RequestMapping(value = "/greeting", method = RequestMethod.GET)
     public String sayHello(Model model) {
