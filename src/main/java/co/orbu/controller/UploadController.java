@@ -1,6 +1,7 @@
 package co.orbu.controller;
 
 import co.orbu.utils.StringGenerator;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,10 +18,15 @@ import java.io.IOException;
 @Controller
 public class UploadController {
 
+    @Value("${ofs.dirUploadPath}")
+    private String dirUploadPath;
+
+    @Value("${ofs.baseImageUrl}")
+    private String baseImageUrl;
+
     @RequestMapping(method = RequestMethod.POST)
-    public
     @ResponseBody
-    String saveImage(@ModelAttribute(value = "data") String data, HttpServletResponse response) throws IOException {
+    public String saveImage(@ModelAttribute(value = "data") String data, HttpServletResponse response) throws IOException {
         if (data == null || data.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return "No data received.";
@@ -69,12 +75,12 @@ public class UploadController {
         // TODO: this code sucks... Proof of concept though -- improve!
 
         byte[] rawData = DatatypeConverter.parseBase64Binary(base64Data);
-        File file = new File(new File("/opt/jetty/webapps/ROOT/-"), StringGenerator.getRandomString() + extension);
+        File file = new File(new File(dirUploadPath), StringGenerator.getRandomString() + extension);
 
         try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(file))) {
             dos.write(rawData, 0, rawData.length);
         }
 
-        return "http://orbu.co/-/" + file.getName();
+        return baseImageUrl + file.getName();
     }
 }
