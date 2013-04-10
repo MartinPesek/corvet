@@ -2,7 +2,6 @@ package co.orbu.controller;
 
 import co.orbu.utils.StringGenerator;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,27 +13,14 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 @Controller
 public class UploadController {
 
-    @RequestMapping(value = "/greeting", method = RequestMethod.GET)
-    public String sayHello(Model model) {
-
-        String base64 = DatatypeConverter.printBase64Binary("hello".getBytes(StandardCharsets.UTF_8));
-        model.addAttribute("base64", base64);
-
-        String decoded = new String(DatatypeConverter.parseBase64Binary(base64));
-        model.addAttribute("decoded", decoded);
-
-        model.addAttribute("greeting", "Hello World");
-
-        return "hello";
-    }
-
     @RequestMapping(method = RequestMethod.POST)
-    public @ResponseBody String saveImage(@ModelAttribute(value = "data") String data, HttpServletResponse response) throws IOException {
+    public
+    @ResponseBody
+    String saveImage(@ModelAttribute(value = "data") String data, HttpServletResponse response) throws IOException {
         if (data == null || data.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return "No data received.";
