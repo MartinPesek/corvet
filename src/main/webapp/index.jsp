@@ -15,6 +15,7 @@
         <div class="comment">// currently works in Chrome and Firefox only</div>
         <div id="rte" contenteditable="true"></div>
         <div id="image"></div>
+        <%--<canvas id="canvas"></canvas>--%>
     </div>
     <script type="text/javascript">
         function uploadImage(data) {
@@ -67,12 +68,46 @@
             });
         }
 
+//        function uploadImageCanvas() {
+//            console.log("Image copy/pasted from Chrome. Using Canvas.");
+//
+//            var canvas = document.getElementById("canvas");
+//            var context = canvas.getContext("2d");
+//
+//            var imageUrl = $("#rte img").attr("src");
+//            console.log("Image URL: " + imageUrl);
+//
+//            var image = new Image();
+//
+//            image.onload = function() {
+//                context.drawImage(image, 0, 0);
+//                setTimeout(function() {
+//                    var canvas = document.getElementById("canvas");
+//                    var data = canvas.toDataURL();
+//                    alert(data);
+//                    uploadImage(data);
+//                }, 100);
+//            };
+//
+//            image.src = imageUrl;
+//
+//        }
+
         document.getElementById("rte").focus();
         document.getElementById("rte").onpaste = function (e) {
             var imageData;
 
             if (e && e.clipboardData && e.clipboardData.items.length > 0) {
                 var item = e.clipboardData.items[0];
+
+//                if (item.type == "text/html") {
+//                    setTimeout(function() {
+//                        uploadImageCanvas();
+//                    }, 0);
+//
+//                    return;
+//                }
+
                 if (item.type != "image/png" && item.type != "image/jpeg" && item.type != "image/gif") {
                     console.log("Not supported type: " + item.type);
                     return;
