@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.CopyOption;
@@ -143,10 +144,10 @@ public class UploadController {
                     String key = p.getKey();
                     String[] values = p.getValue();
 
-                    if (key.startsWith("data=") || values.length == 0)
+                    if (key.startsWith("data") || values.length == 0)
                         continue;
 
-                    urlParameters += "&" + p.getKey() + "=" + p.getValue()[0];
+                    urlParameters += "&" + URLEncoder.encode(p.getKey(), "UTF-8") + "=" + URLEncoder.encode(p.getValue()[0], "UTF-8");
                 }
             }
 
