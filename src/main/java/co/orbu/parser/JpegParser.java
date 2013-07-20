@@ -7,6 +7,9 @@ public class JpegParser implements Parser {
     private static final String MIME_TYPE = "image/jpg";
     private static final byte HEADER1[] = { -1, -40, -1, -32 };
     private static final byte HEADER2[] = { 74, 70, 73, 70 };
+
+    // skipping two bytes between HEADER1 and HEADER2
+    // because these two bytes are used by vendors for their identification/some stuff
     private static final int HEADER_SKIP_COUNT = 2;
 
     private JpegParser() {}
