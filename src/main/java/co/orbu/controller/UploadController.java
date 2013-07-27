@@ -3,6 +3,8 @@ package co.orbu.controller;
 import co.orbu.parser.AutoDetectParser;
 import co.orbu.utils.MimeTypeExtension;
 import co.orbu.utils.StringGenerator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -21,13 +23,14 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Map;
 
 @Controller
 public class UploadController {
+
+    static Logger log = LogManager.getLogger(UploadController.class);
 
     @Value("${ofs.dirUploadPath}")
     private String dirUploadPath;
@@ -68,6 +71,7 @@ public class UploadController {
 
         // unable to parse data, do nothing
         if (base64Data == null || base64Data.isEmpty() || extension == null || extension.isEmpty()) {
+            log.error("Unable to parse base64 data.");
             return null;
         }
 
@@ -116,10 +120,12 @@ public class UploadController {
                 file = newFilename;
             } else {
                 // unknown file, delete it
+                log.error("Unknown file type.");
                 Files.delete(file.toPath());
                 return null;
             }
         } catch (Exception e) {
+            log.error("URL: {}; Exception: {}", url, e);
             return null;
         }
 
@@ -130,6 +136,7 @@ public class UploadController {
     @ResponseBody
     public String saveImage(@ModelAttribute(value = "data") String data, HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (data == null || data.isEmpty()) {
+            log.error("Data is empty, nothing to save.");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return "No data received.";
         }
@@ -157,6 +164,7 @@ public class UploadController {
         }
 
         if (filename == null) {
+            log.error("No file saved.");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return "Unable to parse data.";
         }
