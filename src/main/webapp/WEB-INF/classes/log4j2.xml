@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="error">
+    <appenders>
+        <!--<Console name="Console" target="SYSTEM_OUT">-->
+            <!--<PatternLayout pattern="%d{ISO8601} [%-5level] %logger{36}:%L - %msg%n"/>-->
+        <!--</Console>-->
+        <RollingFile name="RollingFile" fileName="logs/ofs/ofs.log"
+                     filePattern="Logs/OFS/ofs-%d{yyyy-MM-dd}.log.gz">
+            <PatternLayout pattern="%d{ISO8601} [%-5level] %logger{36}:%L - %msg%n"/>
+            <TimeBasedTriggeringPolicy/>
+        </RollingFile>
+    </appenders>
+    <loggers>
+        <root level="error">
+            <!--<appender-ref ref="Console"/>-->
+            <appender-ref ref="RollingFile"/>
+        </root>
+    </loggers>
+</configuration>
