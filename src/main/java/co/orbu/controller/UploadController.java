@@ -141,6 +141,8 @@ public class UploadController {
             return "No data received.";
         }
 
+        log.error("blalaladsf");
+
         String filename;
         if (data.startsWith("http://")) {
             String urlParameters = "";
