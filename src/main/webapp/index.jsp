@@ -71,7 +71,7 @@
         document.getElementById("rte").onpaste = function (e) {
             var imageData;
 
-            if (e && e.clipboardData && e.clipboardData.items.length > 0) {
+            if (e && e.clipboardData && e.clipboardData.items && e.clipboardData.items.length > 0) {
                 var item = e.clipboardData.items[0];
 
                 if (item.type == "text/html") {
