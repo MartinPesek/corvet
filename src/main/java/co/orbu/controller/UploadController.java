@@ -1,6 +1,6 @@
 package co.orbu.controller;
 
-import co.orbu.parser.AutoDetectParser;
+import co.orbu.parser.DetectFileType;
 import co.orbu.utils.MimeTypeExtension;
 import co.orbu.utils.StringGenerator;
 import org.apache.logging.log4j.LogManager;
@@ -108,9 +108,9 @@ public class UploadController {
 
             String extension = null;
 
-            AutoDetectParser adp = new AutoDetectParser(file);
-            if (adp.isKnownType()) {
-                extension = MimeTypeExtension.getExtensionFromMimeType(adp.getMimeType());
+            DetectFileType dft = new DetectFileType(file);
+            if (dft.isKnownType()) {
+                extension = MimeTypeExtension.getExtensionFromMimeType(dft.getMimeType());
             }
 
             if (extension != null) {

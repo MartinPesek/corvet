@@ -2,12 +2,12 @@ package co.orbu.parser;
 
 import java.util.Arrays;
 
-public class GifParser implements Parser {
+public class PngMagicNumbersParser implements MagicNumbersParser {
 
-    private static final String MIME_TYPE = "image/gif";
-    private static final byte HEADER[] = { 0x47, 0x49, 0x46 };
+    private static final String MIME_TYPE = "image/png";
+    private static final byte HEADER[] = { -119, 80, 78, 71, 13, 10, 26, 10 };
 
-    private GifParser() {}
+    private PngMagicNumbersParser() {}
 
     @Override
     public boolean isValid(byte[] data) {
@@ -25,10 +25,10 @@ public class GifParser implements Parser {
     }
 
     private static class SingletonHelper {
-        private static final GifParser INSTANCE = new GifParser();
+        private static final PngMagicNumbersParser INSTANCE = new PngMagicNumbersParser();
     }
 
-    public static GifParser getInstance() {
+    public static PngMagicNumbersParser getInstance() {
         return SingletonHelper.INSTANCE;
     }
 }

@@ -1,6 +1,6 @@
 package co.orbu.parser;
 
-public interface Parser {
+public interface MagicNumbersParser {
 
     public boolean isValid(byte[] data);
 

@@ -4,11 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-public class AutoDetectParser {
+public class DetectFileType {
 
     private String mimeType;
 
-    public AutoDetectParser(File file) throws IOException {
+    public DetectFileType(File file) throws IOException {
         byte[] data = new byte[32];
 
         try (FileInputStream fis = new FileInputStream(file)) {
@@ -19,9 +19,9 @@ public class AutoDetectParser {
             }
         }
 
-        Parser[] parsers = {PngParser.getInstance(), JpegParser.getInstance(), GifParser.getInstance()};
+        MagicNumbersParser[] parsers = {PngMagicNumbersParser.getInstance(), JpegMagicNumbersParser.getInstance(), GifMagicNumbersParser.getInstance()};
 
-        for (Parser p : parsers) {
+        for (MagicNumbersParser p : parsers) {
             if (p.isValid(data)) {
                 mimeType = p.getMimeType();
                 return;
