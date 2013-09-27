@@ -2,7 +2,7 @@ package co.orbu.parser;
 
 import java.util.Arrays;
 
-public class JpegParser implements Parser {
+public class JpegMagicNumbersParser implements MagicNumbersParser {
 
     private static final String MIME_TYPE = "image/jpg";
     private static final byte HEADER1[] = { -1, -40, -1, -32 };
@@ -12,7 +12,7 @@ public class JpegParser implements Parser {
     // because these two bytes are used by vendors for their identification/some stuff
     private static final int HEADER_SKIP_COUNT = 2;
 
-    private JpegParser() {}
+    private JpegMagicNumbersParser() {}
 
     @Override
     public boolean isValid(byte[] data) {
@@ -32,10 +32,10 @@ public class JpegParser implements Parser {
     }
 
     private static class SingletonHelper {
-        private static final JpegParser INSTANCE = new JpegParser();
+        private static final JpegMagicNumbersParser INSTANCE = new JpegMagicNumbersParser();
     }
 
-    public static JpegParser getInstance() {
+    public static JpegMagicNumbersParser getInstance() {
         return SingletonHelper.INSTANCE;
     }
 }
