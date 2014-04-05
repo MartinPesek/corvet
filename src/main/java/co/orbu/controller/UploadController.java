@@ -30,7 +30,8 @@ import java.util.Map;
 @Controller
 public class UploadController {
 
-    static Logger log = LogManager.getLogger(UploadController.class);
+    public static final String CHARSET = "UTF-8";
+    private static Logger log = LogManager.getLogger(UploadController.class);
 
     @Value("${ofs.dirUploadPath}")
     private String dirUploadPath;
@@ -43,9 +44,10 @@ public class UploadController {
 
     /**
      * Saves Base64 string as binary file.
-     * @param   data    Base64 string.
-     * @return  File name of saved file or null if no file was saved.
-     * @throws  IOException
+     *
+     * @param data Base64 string.
+     * @return File name of saved file or null if no file was saved.
+     * @throws IOException
      */
     private String saveBase64ToFile(String data) throws IOException {
         String[] mimeTypeBase64 = data.split(";");
@@ -56,15 +58,17 @@ public class UploadController {
         for (String s : mimeTypeBase64) {
             int colonIndex = s.indexOf(':');
             if (colonIndex == -1) {
-                if (s.toLowerCase().startsWith("base64,"))
+                if (s.toLowerCase().startsWith("base64,")) {
                     base64Data = s.substring(6).replace(' ', '+');
+                }
 
                 continue;
             }
 
             String[] header = s.split(":");
-            if (!header[0].toLowerCase().equals("data"))
+            if (!"data".equalsIgnoreCase(header[0])) {
                 continue;
+            }
 
             extension = MimeTypeExtension.getExtensionFromMimeType(header[1]);
         }
@@ -90,8 +94,9 @@ public class UploadController {
 
     /**
      * Downloads file from web and saves it to file.
-     * @param   url    URL of a file to download.
-     * @return  File name of saved file or null if no file was saved.
+     *
+     * @param url URL of a file to download.
+     * @return File name of saved file or null if no file was saved.
      */
     private String saveURLToFile(String url) {
         File file = new File(new File(dirUploadPath), StringGenerator.getRandomString());
@@ -99,8 +104,7 @@ public class UploadController {
         try {
             URL fileUrl = new URL(url);
 
-            try (ReadableByteChannel rbc = Channels.newChannel(fileUrl.openStream()))
-            {
+            try (ReadableByteChannel rbc = Channels.newChannel(fileUrl.openStream())) {
                 try (FileOutputStream fos = new FileOutputStream(file)) {
                     fos.getChannel().transferFrom(rbc, 0, maxFileDownloadSize);
                 }
@@ -151,10 +155,11 @@ public class UploadController {
                     String key = p.getKey();
                     String[] values = p.getValue();
 
-                    if (key.startsWith("data") || values.length == 0)
+                    if (key.startsWith("data") || values.length == 0) {
                         continue;
+                    }
 
-                    urlParameters += "&" + URLEncoder.encode(p.getKey(), "UTF-8") + "=" + URLEncoder.encode(p.getValue()[0], "UTF-8");
+                    urlParameters += "&" + URLEncoder.encode(p.getKey(), CHARSET) + "=" + URLEncoder.encode(p.getValue()[0], CHARSET);
                 }
             }
 

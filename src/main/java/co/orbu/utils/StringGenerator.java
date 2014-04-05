@@ -42,10 +42,11 @@ public class StringGenerator {
                     break;
 
                 case 2:
-                    if (random.nextBoolean())
+                    if (random.nextBoolean()) {
                         result += vowels[random.nextInt(vowelsCount)];
-                    else
+                    } else {
                         result += numbers[random.nextInt(numbersCount)];
+                    }
 
                     mode = 0;
                     break;

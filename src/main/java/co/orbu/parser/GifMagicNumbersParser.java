@@ -5,14 +5,20 @@ import java.util.Arrays;
 public class GifMagicNumbersParser implements MagicNumbersParser {
 
     private static final String MIME_TYPE = "image/gif";
-    private static final byte HEADER[] = { 0x47, 0x49, 0x46 };
+    private static final byte[] HEADER = {0x47, 0x49, 0x46};
 
-    private GifMagicNumbersParser() {}
+    private GifMagicNumbersParser() {
+    }
+
+    public static GifMagicNumbersParser getInstance() {
+        return SingletonHelper.INSTANCE;
+    }
 
     @Override
     public boolean isValid(byte[] data) {
-        if (data == null || HEADER.length > data.length)
+        if (data == null || HEADER.length > data.length) {
             throw new IllegalArgumentException("data");
+        }
 
         byte[] d = Arrays.copyOf(data, HEADER.length);
 
@@ -26,9 +32,5 @@ public class GifMagicNumbersParser implements MagicNumbersParser {
 
     private static class SingletonHelper {
         private static final GifMagicNumbersParser INSTANCE = new GifMagicNumbersParser();
-    }
-
-    public static GifMagicNumbersParser getInstance() {
-        return SingletonHelper.INSTANCE;
     }
 }
