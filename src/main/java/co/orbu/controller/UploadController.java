@@ -30,7 +30,7 @@ import java.util.Map;
 @Controller
 public class UploadController {
 
-    public static final String CHARSET = "UTF-8";
+    private static final String CHARSET = "UTF-8";
     private static Logger log = LogManager.getLogger(UploadController.class);
 
     @Value("${ofs.dirUploadPath}")
