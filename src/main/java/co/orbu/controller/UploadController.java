@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.channels.Channels;
@@ -31,7 +28,7 @@ import java.util.Map;
 public class UploadController {
 
     private static final String CHARSET = "UTF-8";
-    private static Logger log = LogManager.getLogger(UploadController.class);
+    private static final Logger LOG = LogManager.getLogger(UploadController.class);
 
     @Value("${ofs.dirUploadPath}")
     private String dirUploadPath;
@@ -75,7 +72,7 @@ public class UploadController {
 
         // unable to parse data, do nothing
         if (base64Data == null || base64Data.isEmpty() || extension == null || extension.isEmpty()) {
-            log.error("Unable to parse base64 data.");
+            LOG.error("Unable to parse base64 data.");
             return null;
         }
 
@@ -124,12 +121,12 @@ public class UploadController {
                 file = newFilename;
             } else {
                 // unknown file, delete it
-                log.error("Unknown file type.");
+                LOG.error("Unknown file type.");
                 Files.delete(file.toPath());
                 return null;
             }
         } catch (Exception e) {
-            log.error("URL: {}; Exception: {}", url, e);
+            LOG.error("URL: {}; Exception: {}", url, e);
             return null;
         }
 
@@ -140,40 +137,44 @@ public class UploadController {
     @ResponseBody
     public String saveImage(@ModelAttribute(value = "data") String data, HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (data == null || data.isEmpty()) {
-            log.error("Data is empty, nothing to save.");
+            LOG.error("Data is empty, nothing to save.");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return "No data received.";
         }
 
         String filename;
         if (data.startsWith("http://")) {
-            String urlParameters = "";
-
-            Map<String, String[]> parameters = request.getParameterMap();
-            if (parameters.size() > 1) {
-                for (Map.Entry<String, String[]> p : parameters.entrySet()) {
-                    String key = p.getKey();
-                    String[] values = p.getValue();
-
-                    if (key.startsWith("data") || values.length == 0) {
-                        continue;
-                    }
-
-                    urlParameters += "&" + URLEncoder.encode(p.getKey(), CHARSET) + "=" + URLEncoder.encode(p.getValue()[0], CHARSET);
-                }
-            }
-
+            String urlParameters = getEncodedUrlParameters(request.getParameterMap());
             filename = saveURLToFile(data + urlParameters);
         } else {
             filename = saveBase64ToFile(data);
         }
 
         if (filename == null) {
-            log.error("No file saved.");
+            LOG.error("No file saved.");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return "Unable to parse data.";
         }
 
         return baseImageUrl + filename;
+    }
+
+    private String getEncodedUrlParameters(Map<String, String[]> parameters) throws UnsupportedEncodingException {
+        String urlParameters = "";
+
+        if (parameters != null && parameters.size() > 1) {
+            for (Map.Entry<String, String[]> p : parameters.entrySet()) {
+                String key = p.getKey();
+                String[] values = p.getValue();
+
+                if (key.startsWith("data") || values.length == 0) {
+                    continue;
+                }
+
+                urlParameters += "&" + URLEncoder.encode(p.getKey(), CHARSET) + "=" + URLEncoder.encode(p.getValue()[0], CHARSET);
+            }
+        }
+
+        return urlParameters;
     }
 }

@@ -21,7 +21,11 @@ public class JpegMagicNumbersParser implements MagicNumbersParser {
 
     @Override
     public boolean isValid(byte[] data) {
-        if (data == null || (HEADER1.length + HEADER2.length + HEADER_SKIP_COUNT) > data.length) {
+        if (data == null) {
+            throw new NullPointerException("data");
+        }
+
+        if ((HEADER1.length + HEADER2.length + HEADER_SKIP_COUNT) > data.length) {
             throw new IllegalArgumentException("data");
         }
 

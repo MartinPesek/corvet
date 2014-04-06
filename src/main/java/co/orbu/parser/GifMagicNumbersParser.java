@@ -17,6 +17,10 @@ public class GifMagicNumbersParser implements MagicNumbersParser {
     @Override
     public boolean isValid(byte[] data) {
         if (data == null || HEADER.length > data.length) {
+            throw new NullPointerException("data");
+        }
+
+        if (HEADER.length > data.length) {
             throw new IllegalArgumentException("data");
         }
 

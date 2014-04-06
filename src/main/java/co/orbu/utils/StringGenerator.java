@@ -7,6 +7,9 @@ public class StringGenerator {
     public static final int DEFAULT_STRING_LENGTH = 8;
     private static Random random = new Random();
 
+    private StringGenerator() {
+    }
+
     public static String getRandomString() {
         return getRandomString(DEFAULT_STRING_LENGTH);
     }
@@ -31,6 +34,7 @@ public class StringGenerator {
 
         for (int i = 0; i < length; i++) {
             switch (mode) {
+                default:
                 case 0:
                     result += consonants[random.nextInt(consonantsCount)];
                     mode = 1;
