@@ -20,8 +20,9 @@
         function uploadImage(data) {
             if (data == null) {
                 console.log("No data loaded from Chrome, trying Firefox way...");
-                data = $("#rte img").attr("src");
-                $("#rte img").remove();
+                var rteImage = $("rte").find("img");
+                data = rteImage.attr("src");
+                rteImage.remove();
             }
 
             if (data == null) {

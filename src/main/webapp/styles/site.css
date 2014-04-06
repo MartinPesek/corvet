@@ -49,7 +49,7 @@ html {
 }
 
 body {
-    font-family: "Consolas", "Lucida Console", "Courier New";
+    font-family: "Consolas", "Lucida Console", "Courier New", monospace;
     color: #d7d7c8;
 }
 

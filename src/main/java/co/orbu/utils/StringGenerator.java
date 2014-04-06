@@ -4,8 +4,8 @@ import java.util.Random;
 
 public class StringGenerator {
 
-    public static final int DEFAULT_STRING_LENGTH = 8;
-    private static Random random = new Random();
+    private static final int DEFAULT_STRING_LENGTH = 8;
+    private static final Random random = new Random();
 
     private StringGenerator() {
     }
