@@ -5,7 +5,7 @@ import java.util.Random;
 public class StringGenerator {
 
     private static final int DEFAULT_STRING_LENGTH = 8;
-    private static final Random random = new Random();
+    private static final Random RANDOM = new Random();
 
     private StringGenerator() {
     }
@@ -36,20 +36,20 @@ public class StringGenerator {
             switch (mode) {
                 default:
                 case 0:
-                    result += consonants[random.nextInt(consonantsCount)];
+                    result += consonants[RANDOM.nextInt(consonantsCount)];
                     mode = 1;
                     break;
 
                 case 1:
-                    result += vowels[random.nextInt(vowelsCount)];
+                    result += vowels[RANDOM.nextInt(vowelsCount)];
                     mode = 2;
                     break;
 
                 case 2:
-                    if (random.nextBoolean()) {
-                        result += vowels[random.nextInt(vowelsCount)];
+                    if (RANDOM.nextBoolean()) {
+                        result += vowels[RANDOM.nextInt(vowelsCount)];
                     } else {
-                        result += numbers[random.nextInt(numbersCount)];
+                        result += numbers[RANDOM.nextInt(numbersCount)];
                     }
 
                     mode = 0;
