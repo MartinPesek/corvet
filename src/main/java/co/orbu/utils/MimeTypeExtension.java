@@ -14,6 +14,7 @@ public class MimeTypeExtension {
                 break;
 
             case "image/jpg":
+            case "image/jpeg":
                 extension = ".jpg";
                 break;
 
