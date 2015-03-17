@@ -27,7 +27,7 @@
         <profile>
             <id>prod</id>
             <properties>
-                <ofs.dirUploadPath>/var/lib/tomcat8/webapps/ROOT/-/</ofs.dirUploadPath>
+                <ofs.dirUploadPath>/opt/tomcat/webapps/ROOT/-/</ofs.dirUploadPath>
                 <ofs.baseImageUrl>https://orbu.co/-/</ofs.baseImageUrl>
             </properties>
         </profile>
