@@ -12,6 +12,7 @@
 
     <mvc:annotation-driven/>
 
+    <context:component-scan base-package="co.orbu.config"/>
     <context:component-scan base-package="co.orbu.controller"/>
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"

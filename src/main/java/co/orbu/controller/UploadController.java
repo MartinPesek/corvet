@@ -3,8 +3,10 @@ package co.orbu.controller;
 import co.orbu.parser.DetectFileType;
 import co.orbu.utils.MimeTypeExtension;
 import co.orbu.utils.StringGenerator;
+import com.dropbox.core.v2.DbxClientV2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -22,7 +24,10 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 @Controller
 public class UploadController {
@@ -38,6 +43,15 @@ public class UploadController {
 
     @Value("${ofs.maxFileDownloadSize}")
     private long maxFileDownloadSize;
+
+    private final ExecutorService executorService;
+    private final DbxClientV2 dropboxClient;
+
+    @Autowired
+    public UploadController(ExecutorService executorService, DbxClientV2 dropboxClient) {
+        this.executorService = executorService;
+        this.dropboxClient = dropboxClient;
+    }
 
     /**
      * Saves Base64 string as binary file.
@@ -80,11 +94,21 @@ public class UploadController {
         // TODO: this code sucks... Proof of concept though -- improve!
 
         byte[] rawData = DatatypeConverter.parseBase64Binary(base64Data);
-        File file = new File(new File(dirUploadPath), StringGenerator.getRandomString() + extension);
+        String filename = StringGenerator.getRandomString() + extension;
+        File file = new File(new File(dirUploadPath), filename);
 
         try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(file))) {
             dos.write(rawData, 0, rawData.length);
         }
+
+        executorService.submit(() -> {
+            try {
+                String dropboxFilename = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "_" + filename;
+                dropboxClient.files().uploadBuilder("/ius/" + dropboxFilename).uploadAndFinish(new ByteArrayInputStream(rawData));
+            } catch (Exception e) {
+                LOG.error("Unable to upload file to Dropbox.", e);
+            }
+        });
 
         return file.getName();
     }

@@ -2,7 +2,7 @@ package co.orbu.parser;
 
 interface MagicNumbersParser {
 
-    public boolean isValid(byte[] data);
+    boolean isValid(byte[] data);
 
-    public String getMimeType();
+    String getMimeType();
 }
