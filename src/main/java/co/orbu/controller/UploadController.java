@@ -62,9 +62,8 @@ public class UploadController {
      *
      * @param data Base64 string.
      * @return File name of saved file or null if no file was saved.
-     * @throws IOException
      */
-    private String saveBase64ToFile(String data) throws IOException {
+    private String saveBase64ToFile(String data) {
         String[] mimeTypeBase64 = data.split(";");
 
         String base64Data = null;
