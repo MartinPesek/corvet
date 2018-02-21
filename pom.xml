@@ -16,23 +16,6 @@
         <url>https://orbu.co/scm/r/OrbuFS.git</url>
     </scm>
 
-    <profiles>
-        <profile>
-            <id>dev</id>
-            <properties>
-                <ofs.dirUploadPath>c:/Projects/Servers/apache-tomcat-8.5.28/webapps/ROOT/-/</ofs.dirUploadPath>
-                <ofs.baseImageUrl>http://localhost:8080/-/</ofs.baseImageUrl>
-            </properties>
-        </profile>
-        <profile>
-            <id>prod</id>
-            <properties>
-                <ofs.dirUploadPath>/opt/tomcat/webapps/ROOT/-/</ofs.dirUploadPath>
-                <ofs.baseImageUrl>https://orbu.co/-/</ofs.baseImageUrl>
-            </properties>
-        </profile>
-    </profiles>
-
     <dependencies>
 
         <dependency>

@@ -101,11 +101,6 @@ public class UploadController {
 
         byte[] rawData = DatatypeConverter.parseBase64Binary(base64Data);
         String filename = StringGenerator.getRandomString() + extension;
-        File file = new File(new File(dirUploadPath), filename);
-
-        try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(file))) {
-            dos.write(rawData, 0, rawData.length);
-        }
 
         String resultUrl = null;
         boolean failedUpload = false;
