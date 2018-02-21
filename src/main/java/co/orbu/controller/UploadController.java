@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -88,10 +88,52 @@ public class UploadController {
             return null;
         }
 
-        // TODO: error/exception handling
-        // TODO: this code sucks... Proof of concept though -- improve!
-
         byte[] rawData = DatatypeConverter.parseBase64Binary(base64Data);
+        return saveFile(rawData, mimeType);
+    }
+
+    /**
+     * Downloads file from web and saves it to file.
+     *
+     * @param url URL of a file to download.
+     * @return File name of saved file or null if no file was saved.
+     */
+    private String saveURLToFile(String url) {
+        byte[] rawData;
+        String mimeType;
+
+        try {
+            URL fileUrl = new URL(url);
+
+            HttpURLConnection connection = (HttpURLConnection) fileUrl.openConnection();
+            connection.connect();
+
+            mimeType = connection.getContentType();
+
+            try (InputStream is = connection.getInputStream(); ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+                byte[] chunk = new byte[8192];
+                int bytesRead;
+
+                while ((bytesRead = is.read(chunk)) > 0) {
+                    outputStream.write(chunk, 0, bytesRead);
+                }
+
+                rawData = outputStream.toByteArray();
+            }
+        } catch (Exception e) {
+            LOG.error("Unable to download image: " + url, e);
+            return null;
+        }
+
+        if (rawData == null || rawData.length == 0) {
+            return null;
+        }
+
+        return saveFile(rawData, mimeType);
+    }
+
+    private String saveFile(byte[] rawData, String mimeType) {
+        String extension = MimeTypeExtension.getExtensionFromMimeType(mimeType);
         String filename = StringGenerator.getRandomString() + extension;
 
         String resultUrl = null;
@@ -125,54 +167,6 @@ public class UploadController {
         return resultUrl;
     }
 
-    /**
-     * Downloads file from web and saves it to file.
-     *
-     * @param url URL of a file to download.
-     * @return File name of saved file or null if no file was saved.
-     */
-    private String saveURLToFile(String url) {
-        return null;
-
-        // this isn't really used, remove or fix?
-
-//        File file = new File(new File(dirUploadPath), StringGenerator.getRandomString());
-//
-//        try {
-//            URL fileUrl = new URL(url);
-//
-//            try (ReadableByteChannel rbc = Channels.newChannel(fileUrl.openStream())) {
-//                try (FileOutputStream fos = new FileOutputStream(file)) {
-//                    fos.getChannel().transferFrom(rbc, 0, maxFileDownloadSize);
-//                }
-//            }
-//
-//            String extension = null;
-//
-//            DetectFileType dft = new DetectFileType(file);
-//            if (dft.isKnownType()) {
-//                extension = MimeTypeExtension.getExtensionFromMimeType(dft.getMimeType());
-//            }
-//
-//            if (extension != null) {
-//                // rename file with proper extension
-//                File newFilename = new File(file.getPath() + extension);
-//                Files.move(file.toPath(), newFilename.toPath(), StandardCopyOption.REPLACE_EXISTING);
-//                file = newFilename;
-//            } else {
-//                // unknown file, delete it
-//                LOG.error("Unknown file type.");
-//                Files.delete(file.toPath());
-//                return null;
-//            }
-//        } catch (Exception e) {
-//            LOG.error("URL: {}; Exception: {}", url, e);
-//            return null;
-//        }
-//
-//        return file.getName();
-    }
-
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public String saveImage(@ModelAttribute(value = "data") String data, HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -183,7 +177,7 @@ public class UploadController {
         }
 
         String resultUrl;
-        if (data.startsWith("http://")) {
+        if (data.startsWith("http")) {
             String urlParameters = getEncodedUrlParameters(request.getParameterMap());
             resultUrl = saveURLToFile(data + urlParameters);
         } else {
