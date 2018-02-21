@@ -4,6 +4,10 @@ import co.orbu.parser.DetectFileType;
 import co.orbu.utils.MimeTypeExtension;
 import co.orbu.utils.StringGenerator;
 import com.dropbox.core.v2.DbxClientV2;
+import com.microsoft.azure.storage.StorageException;
+import com.microsoft.azure.storage.blob.BlobProperties;
+import com.microsoft.azure.storage.blob.CloudBlobContainer;
+import com.microsoft.azure.storage.blob.CloudBlockBlob;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
 import java.io.*;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.channels.Channels;
@@ -38,19 +43,18 @@ public class UploadController {
     @Value("${ofs.dirUploadPath}")
     private String dirUploadPath;
 
-    @Value("${ofs.baseImageUrl}")
-    private String baseImageUrl;
-
     @Value("${ofs.maxFileDownloadSize}")
     private long maxFileDownloadSize;
 
     private final ExecutorService executorService;
     private final DbxClientV2 dropboxClient;
+    private final CloudBlobContainer storageService;
 
     @Autowired
-    public UploadController(ExecutorService executorService, DbxClientV2 dropboxClient) {
+    public UploadController(ExecutorService executorService, DbxClientV2 dropboxClient, CloudBlobContainer storageService) {
         this.executorService = executorService;
         this.dropboxClient = dropboxClient;
+        this.storageService = storageService;
     }
 
     /**
@@ -65,6 +69,7 @@ public class UploadController {
 
         String base64Data = null;
         String extension = null;
+        String mimeType = null;
 
         for (String s : mimeTypeBase64) {
             int colonIndex = s.indexOf(':');
@@ -81,7 +86,8 @@ public class UploadController {
                 continue;
             }
 
-            extension = MimeTypeExtension.getExtensionFromMimeType(header[1]);
+            mimeType = header[1];
+            extension = MimeTypeExtension.getExtensionFromMimeType(mimeType);
         }
 
         // unable to parse data, do nothing
@@ -101,16 +107,34 @@ public class UploadController {
             dos.write(rawData, 0, rawData.length);
         }
 
+        String resultUrl = null;
+        boolean failedUpload = false;
+
+        try {
+            CloudBlockBlob blob = storageService.getBlockBlobReference(filename);
+
+            BlobProperties properties = blob.getProperties();
+            properties.setContentType(mimeType);
+            blob.uploadProperties();
+
+            resultUrl = blob.getUri().toASCIIString();
+        } catch (URISyntaxException | StorageException e) {
+            LOG.error("Unable to upload file to Azure.", e);
+            failedUpload = true;
+        }
+
+        String failedFlag = failedUpload ? "_failed_" : "_";
+
         executorService.submit(() -> {
             try {
-                String dropboxFilename = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "_" + filename;
+                String dropboxFilename = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + failedFlag + filename;
                 dropboxClient.files().uploadBuilder("/ius/" + dropboxFilename).uploadAndFinish(new ByteArrayInputStream(rawData));
             } catch (Exception e) {
                 LOG.error("Unable to upload file to Dropbox.", e);
             }
         });
 
-        return file.getName();
+        return resultUrl;
     }
 
     /**
@@ -166,21 +190,21 @@ public class UploadController {
             return "No data received.";
         }
 
-        String filename;
+        String resultUrl;
         if (data.startsWith("http://")) {
             String urlParameters = getEncodedUrlParameters(request.getParameterMap());
-            filename = saveURLToFile(data + urlParameters);
+            resultUrl = saveURLToFile(data + urlParameters);
         } else {
-            filename = saveBase64ToFile(data);
+            resultUrl = saveBase64ToFile(data);
         }
 
-        if (filename == null) {
+        if (resultUrl == null) {
             LOG.error("No file saved.");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return "Unable to parse data.";
         }
 
-        return baseImageUrl + filename;
+        return resultUrl;
     }
 
     private String getEncodedUrlParameters(Map<String, String[]> parameters) throws UnsupportedEncodingException {
