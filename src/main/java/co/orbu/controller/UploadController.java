@@ -1,6 +1,5 @@
 package co.orbu.controller;
 
-import co.orbu.parser.DetectFileType;
 import co.orbu.utils.MimeTypeExtension;
 import co.orbu.utils.StringGenerator;
 import com.dropbox.core.v2.DbxClientV2;
@@ -21,14 +20,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.net.URLEncoder;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
@@ -39,9 +35,6 @@ public class UploadController {
 
     private static final String CHARSET = "UTF-8";
     private static final Logger LOG = LogManager.getLogger(UploadController.class);
-
-    @Value("${ofs.dirUploadPath}")
-    private String dirUploadPath;
 
     @Value("${ofs.maxFileDownloadSize}")
     private long maxFileDownloadSize;
@@ -106,13 +99,14 @@ public class UploadController {
 
         try {
             CloudBlockBlob blob = storageService.getBlockBlobReference(filename);
+            blob.uploadFromByteArray(rawData, 0, rawData.length);
 
             BlobProperties properties = blob.getProperties();
             properties.setContentType(mimeType);
             blob.uploadProperties();
 
             resultUrl = blob.getUri().toASCIIString();
-        } catch (URISyntaxException | StorageException e) {
+        } catch (URISyntaxException | StorageException | IOException e) {
             LOG.error("Unable to upload file to Azure.", e);
             failedUpload = true;
         }
@@ -138,41 +132,45 @@ public class UploadController {
      * @return File name of saved file or null if no file was saved.
      */
     private String saveURLToFile(String url) {
-        File file = new File(new File(dirUploadPath), StringGenerator.getRandomString());
+        return null;
 
-        try {
-            URL fileUrl = new URL(url);
+        // this isn't really used, remove or fix?
 
-            try (ReadableByteChannel rbc = Channels.newChannel(fileUrl.openStream())) {
-                try (FileOutputStream fos = new FileOutputStream(file)) {
-                    fos.getChannel().transferFrom(rbc, 0, maxFileDownloadSize);
-                }
-            }
-
-            String extension = null;
-
-            DetectFileType dft = new DetectFileType(file);
-            if (dft.isKnownType()) {
-                extension = MimeTypeExtension.getExtensionFromMimeType(dft.getMimeType());
-            }
-
-            if (extension != null) {
-                // rename file with proper extension
-                File newFilename = new File(file.getPath() + extension);
-                Files.move(file.toPath(), newFilename.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                file = newFilename;
-            } else {
-                // unknown file, delete it
-                LOG.error("Unknown file type.");
-                Files.delete(file.toPath());
-                return null;
-            }
-        } catch (Exception e) {
-            LOG.error("URL: {}; Exception: {}", url, e);
-            return null;
-        }
-
-        return file.getName();
+//        File file = new File(new File(dirUploadPath), StringGenerator.getRandomString());
+//
+//        try {
+//            URL fileUrl = new URL(url);
+//
+//            try (ReadableByteChannel rbc = Channels.newChannel(fileUrl.openStream())) {
+//                try (FileOutputStream fos = new FileOutputStream(file)) {
+//                    fos.getChannel().transferFrom(rbc, 0, maxFileDownloadSize);
+//                }
+//            }
+//
+//            String extension = null;
+//
+//            DetectFileType dft = new DetectFileType(file);
+//            if (dft.isKnownType()) {
+//                extension = MimeTypeExtension.getExtensionFromMimeType(dft.getMimeType());
+//            }
+//
+//            if (extension != null) {
+//                // rename file with proper extension
+//                File newFilename = new File(file.getPath() + extension);
+//                Files.move(file.toPath(), newFilename.toPath(), StandardCopyOption.REPLACE_EXISTING);
+//                file = newFilename;
+//            } else {
+//                // unknown file, delete it
+//                LOG.error("Unknown file type.");
+//                Files.delete(file.toPath());
+//                return null;
+//            }
+//        } catch (Exception e) {
+//            LOG.error("URL: {}; Exception: {}", url, e);
+//            return null;
+//        }
+//
+//        return file.getName();
     }
 
     @RequestMapping(method = RequestMethod.POST)
