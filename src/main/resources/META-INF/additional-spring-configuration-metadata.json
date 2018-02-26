@@ -18,7 +18,7 @@
     {
       "name": "gongyu.maxFileDownloadSize",
       "type": "java.lang.String",
-      "description": "Maximum file size when downloading file from server."
+      "description": "Maximum allowed file size when downloading a file from a server."
     }
   ]
 }

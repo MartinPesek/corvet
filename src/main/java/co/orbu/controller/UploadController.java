@@ -1,5 +1,6 @@
 package co.orbu.controller;
 
+import co.orbu.config.GongyuConfig;
 import co.orbu.utils.MimeTypeExtension;
 import co.orbu.utils.StringGenerator;
 import com.dropbox.core.v2.DbxClientV2;
@@ -10,7 +11,6 @@ import com.microsoft.azure.storage.blob.CloudBlockBlob;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,15 +36,14 @@ public class UploadController {
     private static final String CHARSET = "UTF-8";
     private static final Logger LOG = LogManager.getLogger(UploadController.class);
 
-    @Value("${gongyu.maxFileDownloadSize}")
-    private long maxFileDownloadSize;
-
+    private final GongyuConfig gongyuConfig;
     private final ExecutorService executorService;
     private final DbxClientV2 dropboxClient;
     private final CloudBlobContainer storageService;
 
     @Autowired
-    public UploadController(ExecutorService executorService, DbxClientV2 dropboxClient, CloudBlobContainer storageService) {
+    public UploadController(GongyuConfig gongyuConfig, ExecutorService executorService, DbxClientV2 dropboxClient, CloudBlobContainer storageService) {
+        this.gongyuConfig = gongyuConfig;
         this.executorService = executorService;
         this.dropboxClient = dropboxClient;
         this.storageService = storageService;
@@ -123,6 +122,8 @@ public class UploadController {
                     outputStream.write(chunk, 0, bytesRead);
                 }
 
+                // TODO: check if downloading exceeds max. file size
+
                 rawData = outputStream.toByteArray();
             }
         } catch (Exception e) {
@@ -163,7 +164,9 @@ public class UploadController {
         executorService.submit(() -> {
             try {
                 String dropboxFilename = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + failedFlag + filename;
-                dropboxClient.files().uploadBuilder("/ius/" + dropboxFilename).uploadAndFinish(new ByteArrayInputStream(rawData));
+                dropboxClient.files()
+                        .uploadBuilder(gongyuConfig.getDropboxUploadDirectory() + dropboxFilename)
+                        .uploadAndFinish(new ByteArrayInputStream(rawData));
             } catch (Exception e) {
                 LOG.error("Unable to upload file to Dropbox.", e);
             }

@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
 
+import javax.annotation.PostConstruct;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.util.concurrent.ExecutorService;
@@ -19,7 +20,7 @@ import java.util.concurrent.Executors;
 
 @Configuration
 @EnableAsync
-public class Config {
+public class GongyuConfig {
 
     @Value("${gongyu.dropboxAccessKey}")
     private String dropboxAccessKey;
@@ -30,19 +31,49 @@ public class Config {
     @Value("${gongyu.storageContainerName}")
     private String storageContainerName;
 
+    @Value("${gongyu.maxFileDownloadSize}")
+    private long maxFileDownloadSize;
+
+    private String dropboxUploadDirectory;
+
+    @PostConstruct
+    void init() {
+        dropboxUploadDirectory = "/" + storageContainerName + "/";
+    }
+
+    /**
+     * Gets maximum allowed file size when downloading a file from a server.
+     *
+     * @return File size in bytes.
+     */
+    // TODO: use this then remove @SuppressWarnings
+    @SuppressWarnings("unused")
+    public long getMaxFileDownloadSize() {
+        return maxFileDownloadSize;
+    }
+
+    /**
+     * Gets Dropbox's upload directory in a "/dir/" format.
+     *
+     * @return Upload directory path.
+     */
+    public String getDropboxUploadDirectory() {
+        return dropboxUploadDirectory;
+    }
+
     @Bean
-    public ExecutorService getExecutorService() {
+    ExecutorService getExecutorService() {
         return Executors.newSingleThreadExecutor();
     }
 
     @Bean
-    public DbxClientV2 getDropboxClient() {
+    DbxClientV2 getDropboxClient() {
         DbxRequestConfig config = DbxRequestConfig.newBuilder("gongyu/1.0").withAutoRetryEnabled().build();
         return new DbxClientV2(config, dropboxAccessKey);
     }
 
     @Bean
-    public CloudBlobContainer getStorageService() throws URISyntaxException, InvalidKeyException, StorageException {
+    CloudBlobContainer getStorageService() throws URISyntaxException, InvalidKeyException, StorageException {
         CloudStorageAccount account = CloudStorageAccount.parse(storageConnectionString);
         CloudBlobClient serviceClient = account.createCloudBlobClient();
 
