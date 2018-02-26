@@ -1,17 +1,22 @@
 {
   "properties": [
     {
-      "name": "ofs.dropboxAccessKey",
+      "name": "gongyu.dropboxAccessKey",
       "type": "java.lang.String",
       "description": "Dropbox access key."
     },
     {
-      "name": "ofs.storageConnectionString",
+      "name": "gongyu.storageConnectionString",
       "type": "java.lang.String",
       "description": "Azure Storage connection string."
     },
     {
-      "name": "ofs.maxFileDownloadSize",
+      "name": "gongyu.storageContainerName",
+      "type": "java.lang.String",
+      "description": "Azure Storage container name."
+    },
+    {
+      "name": "gongyu.maxFileDownloadSize",
       "type": "java.lang.String",
       "description": "Maximum file size when downloading file from server."
     }

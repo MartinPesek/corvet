@@ -21,11 +21,14 @@ import java.util.concurrent.Executors;
 @EnableAsync
 public class Config {
 
-    @Value("${ofs.dropboxAccessKey}")
+    @Value("${gongyu.dropboxAccessKey}")
     private String dropboxAccessKey;
 
-    @Value("${ofs.storageConnectionString}")
+    @Value("${gongyu.storageConnectionString}")
     private String storageConnectionString;
+
+    @Value("${gongyu.storageContainerName}")
+    private String storageContainerName;
 
     @Bean
     public ExecutorService getExecutorService() {
@@ -34,7 +37,7 @@ public class Config {
 
     @Bean
     public DbxClientV2 getDropboxClient() {
-        DbxRequestConfig config = DbxRequestConfig.newBuilder("ius/1.0").withAutoRetryEnabled().build();
+        DbxRequestConfig config = DbxRequestConfig.newBuilder("gongyu/1.0").withAutoRetryEnabled().build();
         return new DbxClientV2(config, dropboxAccessKey);
     }
 
@@ -43,7 +46,7 @@ public class Config {
         CloudStorageAccount account = CloudStorageAccount.parse(storageConnectionString);
         CloudBlobClient serviceClient = account.createCloudBlobClient();
 
-        CloudBlobContainer container = serviceClient.getContainerReference("ofs");
+        CloudBlobContainer container = serviceClient.getContainerReference(storageContainerName);
         container.createIfNotExists(BlobContainerPublicAccessType.BLOB, null, null);
 
         return container;

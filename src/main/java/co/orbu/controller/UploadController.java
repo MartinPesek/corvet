@@ -36,7 +36,7 @@ public class UploadController {
     private static final String CHARSET = "UTF-8";
     private static final Logger LOG = LogManager.getLogger(UploadController.class);
 
-    @Value("${ofs.maxFileDownloadSize}")
+    @Value("${gongyu.maxFileDownloadSize}")
     private long maxFileDownloadSize;
 
     private final ExecutorService executorService;

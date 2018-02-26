@@ -51,10 +51,12 @@ html {
 body {
     font-family: "Consolas", "Lucida Console", "Courier New", monospace;
     color: #d7d7c8;
+    padding: 1em;
 }
 
 h1 {
-    font-size: 32pt;
+    font-size: 22pt;
+    margin-bottom: 1em;
 }
 
 h1 span {
@@ -64,7 +66,7 @@ h1 span {
 
 #main {
     font-size: 14pt;
-    padding: 0 4em;
+    padding: 0 2em;
 }
 
 #main #rte {
@@ -76,6 +78,6 @@ h1 span {
 }
 
 #main .url {
-    font-size: 22pt;
+    font-size: 18pt;
     padding-bottom: 1em;
 }

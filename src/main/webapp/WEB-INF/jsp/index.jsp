@@ -2,17 +2,17 @@
 <html>
 <head>
     <meta charset="utf-8"/>
-    <title>Orbu File Sharing</title>
+    <title>Gongyu File Sharing</title>
     <link href="styles/site.css" rel="stylesheet" type="text/css"/>
     <script src="scripts/jquery-1.9.1.min.js" type="text/javascript"></script>
 </head>
 <body>
-<h1><span>namespace</span> Orbu.Net.Web.Service.ImageUploading<br/>{</h1>
+<h1><span>Gongyu</span> file sharing</h1>
 
 <div id="main">
     <div id="url"></div>
     <div id="form">
-        <div class="comment">// currently works in Chrome and Firefox only</div>
+        <div class="comment">Currently works in Firefox, Chrome and Edge</div>
         <div id="rte" contenteditable="true"></div>
         <div id="image"></div>
     </div>
@@ -107,6 +107,5 @@
     </script>
 </div>
 
-<h1>}</h1>
 </body>
 </html>

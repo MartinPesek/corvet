@@ -1,6 +1,7 @@
-ofs:
-  dropboxAccessKey: @ofs.dropboxAccessKey@
-  storageConnectionString: @ofs.storageConnectionString@
+gongyu:
+  dropboxAccessKey: @gongyu.dropboxAccessKey@
+  storageConnectionString: @gongyu.storageConnectionString@
+  storageContainerName: @gongyu.storageContainerName@
   maxFileDownloadSize: 52428800
 
 spring:
