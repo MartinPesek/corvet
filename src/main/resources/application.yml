@@ -1,8 +1,13 @@
 gongyu:
-  dropboxAccessKey: @gongyu.dropboxAccessKey@
-  storageConnectionString: @gongyu.storageConnectionString@
   storageContainerName: @gongyu.storageContainerName@
   maxFileDownloadSize: 52428800
+
+azure:
+  keyvault:
+    uri: https://${KEYVAULT_NAME}.vault.azure.net/
+    client-id: ${KEYVAULT_CLIENT_ID}
+    client-key: ${KEYVAULT_CLIENT_SECRET}
+    token-acquire-timeout-seconds: 15
 
 spring:
   servlet:

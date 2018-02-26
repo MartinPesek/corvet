@@ -1,16 +1,6 @@
 {
   "properties": [
     {
-      "name": "gongyu.dropboxAccessKey",
-      "type": "java.lang.String",
-      "description": "Dropbox access key."
-    },
-    {
-      "name": "gongyu.storageConnectionString",
-      "type": "java.lang.String",
-      "description": "Azure Storage connection string."
-    },
-    {
       "name": "gongyu.storageContainerName",
       "type": "java.lang.String",
       "description": "Azure Storage container name."

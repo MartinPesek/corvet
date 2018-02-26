@@ -7,6 +7,7 @@ import com.microsoft.azure.storage.StorageException;
 import com.microsoft.azure.storage.blob.BlobContainerPublicAccessType;
 import com.microsoft.azure.storage.blob.CloudBlobClient;
 import com.microsoft.azure.storage.blob.CloudBlobContainer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,18 +16,13 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import javax.annotation.PostConstruct;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Configuration
 @EnableAsync
 public class GongyuConfig {
-
-    @Value("${gongyu.dropboxAccessKey}")
-    private String dropboxAccessKey;
-
-    @Value("${gongyu.storageConnectionString}")
-    private String storageConnectionString;
 
     @Value("${gongyu.storageContainerName}")
     private String storageContainerName;
@@ -35,6 +31,13 @@ public class GongyuConfig {
     private long maxFileDownloadSize;
 
     private String dropboxUploadDirectory;
+
+    private final Secrets secrets;
+
+    @Autowired
+    public GongyuConfig(Secrets secrets) {
+        this.secrets = Objects.requireNonNull(secrets);
+    }
 
     @PostConstruct
     void init() {
@@ -69,12 +72,12 @@ public class GongyuConfig {
     @Bean
     DbxClientV2 getDropboxClient() {
         DbxRequestConfig config = DbxRequestConfig.newBuilder("gongyu/1.0").withAutoRetryEnabled().build();
-        return new DbxClientV2(config, dropboxAccessKey);
+        return new DbxClientV2(config, secrets.getDropboxAccessKey());
     }
 
     @Bean
     CloudBlobContainer getStorageService() throws URISyntaxException, InvalidKeyException, StorageException {
-        CloudStorageAccount account = CloudStorageAccount.parse(storageConnectionString);
+        CloudStorageAccount account = CloudStorageAccount.parse(secrets.getAzureStorageConnectionString());
         CloudBlobClient serviceClient = account.createCloudBlobClient();
 
         CloudBlobContainer container = serviceClient.getContainerReference(storageContainerName);

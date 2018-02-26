@@ -28,6 +28,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 
 @Controller
@@ -43,10 +44,10 @@ public class UploadController {
 
     @Autowired
     public UploadController(GongyuConfig gongyuConfig, ExecutorService executorService, DbxClientV2 dropboxClient, CloudBlobContainer storageService) {
-        this.gongyuConfig = gongyuConfig;
-        this.executorService = executorService;
-        this.dropboxClient = dropboxClient;
-        this.storageService = storageService;
+        this.gongyuConfig = Objects.requireNonNull(gongyuConfig);
+        this.executorService = Objects.requireNonNull(executorService);
+        this.dropboxClient = Objects.requireNonNull(dropboxClient);
+        this.storageService = Objects.requireNonNull(storageService);
     }
 
     @RequestMapping("/")
