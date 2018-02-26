@@ -1,0 +1,19 @@
+{
+  "properties": [
+    {
+      "name": "ofs.dropboxAccessKey",
+      "type": "java.lang.String",
+      "description": "Dropbox access key."
+    },
+    {
+      "name": "ofs.storageConnectionString",
+      "type": "java.lang.String",
+      "description": "Azure Storage connection string."
+    },
+    {
+      "name": "ofs.maxFileDownloadSize",
+      "type": "java.lang.String",
+      "description": "Maximum file size when downloading file from server."
+    }
+  ]
+}

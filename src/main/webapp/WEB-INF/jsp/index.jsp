@@ -37,7 +37,7 @@
             document.getElementById("image").appendChild(image);
 
             $.ajax({
-                url: 'saveImage.html',
+                url: '/',
                 type: 'POST',
                 data: "data=" + data,
                 success: function (result) {

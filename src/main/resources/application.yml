@@ -1,0 +1,14 @@
+ofs:
+  dropboxAccessKey: @ofs.dropboxAccessKey@
+  storageConnectionString: @ofs.storageConnectionString@
+  maxFileDownloadSize: 52428800
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+  mvc:
+    view:
+      prefix: /WEB-INF/jsp/
+      suffix: .jsp

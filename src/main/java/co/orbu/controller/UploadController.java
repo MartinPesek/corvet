@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.DatatypeConverter;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
@@ -27,6 +26,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
@@ -50,6 +50,11 @@ public class UploadController {
         this.storageService = storageService;
     }
 
+    @RequestMapping("/")
+    public String index() {
+        return "index";
+    }
+
     /**
      * Saves Base64 string as binary file.
      *
@@ -67,7 +72,7 @@ public class UploadController {
             int colonIndex = s.indexOf(':');
             if (colonIndex == -1) {
                 if (s.toLowerCase().startsWith("base64,")) {
-                    base64Data = s.substring(6).replace(' ', '+');
+                    base64Data = s.substring(7).replace(' ', '+');
                 }
 
                 continue;
@@ -88,7 +93,7 @@ public class UploadController {
             return null;
         }
 
-        byte[] rawData = DatatypeConverter.parseBase64Binary(base64Data);
+        byte[] rawData = Base64.getDecoder().decode(base64Data);
         return saveFile(rawData, mimeType);
     }
 
@@ -167,7 +172,7 @@ public class UploadController {
         return resultUrl;
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
     public String saveImage(@ModelAttribute(value = "data") String data, HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (data == null || data.isEmpty()) {
