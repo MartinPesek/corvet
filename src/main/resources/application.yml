@@ -1,4 +1,5 @@
 gongyu:
+  version: @revision@
   storageContainerName: @gongyu.storageContainerName@
   maxFileDownloadSize: 52428800
 

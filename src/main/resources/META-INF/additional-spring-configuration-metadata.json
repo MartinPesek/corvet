@@ -1,6 +1,11 @@
 {
   "properties": [
     {
+      "name": "gongyu.version",
+      "type": "java.lang.String",
+      "description": "Version of the application."
+    },
+    {
       "name": "gongyu.storageContainerName",
       "type": "java.lang.String",
       "description": "Azure Storage container name."
