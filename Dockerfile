@@ -10,7 +10,7 @@ ARG storageContainerName=gongyu
 RUN mvn -Drevision=$revision -Dgongyu.storageContainerName=$storageContainerName clean package
 
 # release stage
-FROM azul/zulu-openjdk-alpine:11
+FROM openjdk:11-slim
 
 MAINTAINER Martin Pešek <martin@orbu.net>
 
