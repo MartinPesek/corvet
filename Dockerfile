@@ -1,5 +1,5 @@
 # build stage
-FROM maven:3.5.3-jdk-10-slim AS build
+FROM maven:3.5.4-jdk-11-slim AS build
 
 WORKDIR /build
 COPY . .
@@ -10,9 +10,9 @@ ARG storageContainerName=gongyu
 RUN mvn -Drevision=$revision -Dgongyu.storageContainerName=$storageContainerName clean package
 
 # release stage
-FROM openjdk:10-slim
+FROM azul/zulu-openjdk-alpine:11
 
-MAINTAINER Martin Pešek <pesek.dev@gmail.com>
+MAINTAINER Martin Pešek <martin@orbu.net>
 
 ARG revision
 
