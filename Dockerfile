@@ -18,4 +18,4 @@ ARG revision
 
 COPY --from=build /build/target/gongyu-$revision.war ./gongyu.war
 
-ENTRYPOINT ["java", "-jar", "/gongyu.war"]
+ENTRYPOINT ["java", "-XX:+UseG1GC", "-Xmx128m", "-Xms32m", "-jar", "/gongyu.war"]
