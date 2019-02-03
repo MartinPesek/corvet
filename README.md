@@ -1,4 +1,4 @@
-# Gongyu
+# Corvet
 
 File sharing app that makes it easy to upload an image to a web and share its link immediately.
 
