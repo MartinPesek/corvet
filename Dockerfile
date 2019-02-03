@@ -10,7 +10,7 @@ ARG storageContainerName=gongyu
 RUN mvn -Drevision=$revision -Dgongyu.storageContainerName=$storageContainerName clean package
 
 # release stage
-FROM adoptopenjdk/openjdk11-openj9:latest
+FROM openjdk:11-slim
 
 ARG revision
 
