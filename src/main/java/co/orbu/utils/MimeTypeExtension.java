@@ -23,7 +23,7 @@ public class MimeTypeExtension {
                 break;
 
             default:
-                throw new IllegalArgumentException("mimeType");
+                throw new IllegalArgumentException("Unknown mimeType: " + mimeType);
         }
 
         return extension;
