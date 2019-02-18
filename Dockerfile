@@ -6,8 +6,10 @@ COPY . .
 
 ARG revision=DEV
 ARG storageContainerName=gongyu
+ARG serverName=local
+ARG sentryDsn
 
-RUN mvn -Drevision=$revision -Dgongyu.storageContainerName=$storageContainerName clean package
+RUN mvn -Drevision=$revision -Dgongyu.storageContainerName=$storageContainerName -Dserver.name=$serverName -Dsentry.dsn=$sentryDsn clean package
 
 # release stage
 FROM adoptopenjdk/openjdk11-openj9:latest
@@ -16,4 +18,4 @@ ARG revision
 
 COPY --from=build /build/target/gongyu-$revision.war ./gongyu.war
 
-ENTRYPOINT ["java", "-XX:+UseG1GC", "-Xss256k", "-jar", "/gongyu.war"]
+ENTRYPOINT ["java", "-Xss256k", "-jar", "/gongyu.war"]
