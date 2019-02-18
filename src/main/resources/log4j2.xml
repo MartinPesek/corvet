@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration status="error">
+<configuration packages="org.apache.logging.log4j.core,io.sentry.log4j2">
     <appenders>
-        <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{ISO8601} [%-5level] %logger{36}:%L - %msg%n"/>
+        <Console name="Console" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="%clr{%d{yyyy-MM-dd HH:mm:ss.SSS}}{faint} %clr{%5p} %clr{${sys:PID}}{magenta} %clr{[%10.10t]}{faint} %clr{%-40.40c{1.}}{cyan} %clr{:}{faint} %m%n%xwEx" />
         </Console>
+
+        <Sentry name="Sentry"/>
     </appenders>
     <loggers>
-        <root level="error">
+        <Logger name="org.hibernate" level="WARN"/>
+        <Logger name="org.springframework" level="WARN"/>
+        <Logger name="org.apache" level="INFO"/>
+        <Logger name="io.sentry" level="WARN"/>
+
+        <AsyncRoot level="debug">
             <appender-ref ref="Console"/>
-        </root>
+            <appender-ref ref="Sentry" level="warn"/>
+        </AsyncRoot>
     </loggers>
 </configuration>
