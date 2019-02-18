@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration packages="org.apache.logging.log4j.core">
+    <appenders>
+        <Console name="Console" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="%clr{%d{yyyy-MM-dd HH:mm:ss.SSS}}{faint} %clr{%5p} %clr{${sys:PID}}{magenta} %clr{[%10.10t]}{faint} %clr{%-40.40c{1.}}{cyan} %clr{:}{faint} %m%n%xwEx" />
+        </Console>
+    </appenders>
+    <loggers>
+        <Logger name="org.hibernate" level="INFO"/>
+        <Logger name="org.springframework" level="INFO"/>
+        <Logger name="io.undertow" level="INFO"/>
+        <Logger name="org.xnio" level="INFO"/>
+
+        <AsyncRoot level="debug">
+            <appender-ref ref="Console"/>
+        </AsyncRoot>
+    </loggers>
+</configuration>
