@@ -15,3 +15,6 @@ spring:
   output:
     ansi:
       enabled: always
+server:
+  tomcat:
+    max-http-post-size: 50MB

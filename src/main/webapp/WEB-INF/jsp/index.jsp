@@ -20,6 +20,7 @@
         function uploadImage(data) {
             if (data == null) {
                 console.log("No data loaded from Chrome, trying Firefox way...");
+
                 var rteImage = $("#rte").find("img");
                 data = rteImage.attr("src");
                 rteImage.remove();
@@ -36,10 +37,15 @@
             $("#image").children().remove();
             document.getElementById("image").appendChild(image);
 
+            var formData = new FormData();
+            formData.append("data", data);
+
             $.ajax({
                 url: '/',
                 type: 'POST',
-                data: "data=" + data,
+                data: formData,
+                processData: false,
+                contentType: false,
                 success: function (result) {
                     if (result == "") {
                         return;
@@ -76,7 +82,7 @@
                 var item = e.clipboardData.items[0];
 
                 if (item.type == "text/html") {
-                    setTimeout(function() {
+                    setTimeout(function () {
                         console.log("Text/html code pasted.");
                         uploadImage(null);
                     }, 0);
