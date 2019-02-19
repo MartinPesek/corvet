@@ -1,3 +1,8 @@
+import js.externals.jquery.JQuery.Deferred
+import js.externals.jquery.JQuery.jqXHR
+import js.externals.jquery.JQueryAjaxSettings
+import js.externals.jquery.JQueryPromiseCallback
+import js.externals.jquery.JQueryXHR
 import js.externals.jquery.jQuery
 import org.w3c.dom.DataTransferItem
 import org.w3c.dom.DataTransferItemList
@@ -6,6 +11,7 @@ import org.w3c.dom.clipboard.ClipboardEvent
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventListener
 import org.w3c.dom.get
+import org.w3c.xhr.FormData
 import kotlin.browser.document
 import kotlin.browser.window
 
@@ -13,7 +19,7 @@ fun main() {
     val rte = document.getElementById("rte") as? HTMLElement ?: error("Unable to locate rte element.")
 
     rte.focus()
-    rte.addEventListener("paste", EventListener { event: Event -> onPaste(event) })
+    rte.addEventListener("paste", EventListener { event: Event -> window.setTimeout(onPaste(event), 1) })
 }
 
 fun onPaste(event: Event) {
@@ -53,17 +59,41 @@ fun onPaste(event: Event) {
 
         println("No. of items pasted: ${data.items.length}")
 
-        window.setTimeout({
-            val rteImg = jQuery("#rte").find("img")
-            if (rteImg != undefined && rteImg.length == 1) {
-                println("found pasted img object")
-                val attr = rteImg.attr("src")
-                println("attr: $attr")
-            } else {
-                println("No rte img object was pasted!")
-            }
-        }, 1)
+        val rteImg = jQuery("#rte").find("img")
+        if (rteImg.length == 1) {
+            val formData = FormData()
+            formData.append("data", rteImg.attr("src")!!)
+
+//            val settings: JQueryAjaxSettings = object : JQueryAjaxSettings {}
+//            settings.processData = false
+
+//            val aa = jQuery.ajaxSetup(object : JQueryAjaxSettings {
+//                override val success: ((data: Any, textStatus: String, jqXHR: JQueryXHR) -> Any)?
+//                    get() = { result, textStatus, jqXHR ->
+//                        {
+//                            if (result is String) {
+//
+//                            }
+//                        }
+//                    }
+//            })
+            jQuery.ajax("", object : JQueryAjaxSettings {}.apply {
+                url = "/"
+                type = "POST"
+                this.data = formData
+                processData = false
+                contentType = false
+            })
+
+
+        } else {
+            error("No img object was pasted!")
+        }
     }
+}
+
+fun onSuccess(result: String) {
+
 }
 
 fun DataTransferItemList.wrap(): Iterator<DataTransferItem> {
