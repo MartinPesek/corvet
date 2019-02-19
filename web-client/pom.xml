@@ -13,10 +13,24 @@
     <artifactId>web-client</artifactId>
     <packaging>jar</packaging>
 
+    <repositories>
+        <repository>
+            <id>kotlin-js-externals</id>
+            <name>Kotlin/JS externals</name>
+            <url>https://kotlin.bintray.com/js-externals</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib-js</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>kotlin.js.externals</groupId>
+            <artifactId>kotlin-js-jquery</artifactId>
+            <version>1.10.0-0</version>
         </dependency>
     </dependencies>
 
