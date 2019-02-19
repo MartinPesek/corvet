@@ -1,13 +1,13 @@
 gongyu:
   version: "@revision@"
   storageContainerName: @gongyu.storageContainerName@
-  maxFileDownloadSize: 52428800
+  maxFileDownloadSize: 15728640
 
 spring:
   servlet:
     multipart:
-      max-file-size: 50MB
-      max-request-size: 50MB
+      max-file-size: 15MB
+      max-request-size: 15MB
   mvc:
     view:
       prefix: /WEB-INF/jsp/
@@ -17,4 +17,4 @@ spring:
       enabled: always
 server:
   tomcat:
-    max-http-post-size: 50MB
+    max-http-post-size: 15MB
