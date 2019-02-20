@@ -1,6 +1,9 @@
 package net.orbu.corvet.web.controller
 
+import net.orbu.corvet.web.dto.SaveImageResponse
 import org.apache.logging.log4j.LogManager
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletRequest
@@ -13,20 +16,25 @@ class UploadController {
 
     @GetMapping("/")
     fun index(): String {
-        return "index"
+        return "index.html"
     }
 
     @RequestMapping(value = ["/"], method = [RequestMethod.POST])
     @ResponseBody
-    fun saveImage(@ModelAttribute(value = "data") data: String, request: HttpServletRequest, response: HttpServletResponse): String {
+    fun saveImage(@ModelAttribute(value = "data") data: String, request: HttpServletRequest, response: HttpServletResponse): ResponseEntity<SaveImageResponse> {
         if (data.isBlank()) {
-            log.error("Data is empty, nothing to save.")
-            response.status = HttpServletResponse.SC_BAD_REQUEST
-            return "No data received."
+//            log.error("Data is empty, nothing to save.")
+            throw RuntimeException("No data received.")
+//            response.status = HttpServletResponse.SC_BAD_REQUEST
+//            return "No data received."
         }
 
-        log.info("Received: ${data.substring(0 until data.indexOf(","))}, total size: ${data.length}")
+        if (data == "1") {
+            throw RuntimeException("Incorrect format of data.")
+        }
 
-        return "url"
+//        log.info("Received: ${data.substring(0 until data.indexOf(","))}, total size: ${data.length}")
+
+        return ResponseEntity(SaveImageResponse("https://orbu.net"), HttpStatus.OK)
     }
 }
