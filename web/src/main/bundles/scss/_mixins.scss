@@ -1,0 +1,21 @@
+﻿@mixin list-reset($margin: 0, $padding: 0, $li-margin: 0, $li-padding: 0, $background: transparent) {
+    margin: $margin;
+    padding: $padding;
+
+    li {
+        list-style: none;
+        background: $background;
+        margin: $li-margin;
+        padding: $li-padding;
+    }
+}
+
+%list-reset {
+    @include list-reset();
+}
+
+@mixin pseudo($display: block, $position: absolute, $content: '') {
+    content: $content;
+    display: $display;
+    position: $position;
+}

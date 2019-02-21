@@ -1,0 +1,28 @@
+html, body {
+    height: 100%;
+}
+.wrapper {
+    min-height: 100%;
+    background: #000000;
+    background-size: 100%;
+    padding-bottom: 110px;
+    @media (min-width: $screen-xs-min) {
+        padding-bottom: 150px;
+    }
+    @media (min-width: $screen-sm-min) {
+        padding-bottom: 210px;
+
+    }
+    @media (min-width: $screen-md-min) {
+        padding-bottom: 270px;
+
+    }
+    @media (min-width: $screen-lg-min - (($screen-lg-min - $screen-md-min) / 2)) {
+        padding-bottom: 360px;
+
+    }
+    @media (min-width: $screen-lg-min) {
+        padding-bottom: 445px;
+    }
+}
+

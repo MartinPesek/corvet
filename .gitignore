@@ -211,4 +211,11 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# Node modules
+web/node_modules
+
+# Assets
+web/src/main/resources/public/assets
+
 # End of https://www.gitignore.io/api/java,linux,macos,maven,kotlin,windows,intellij+all,visualstudiocode
+
