@@ -1,13 +1,9 @@
 package net.orbu.corvet.web.controller
 
-import net.orbu.corvet.web.dto.SaveImageResponse
-import org.apache.logging.log4j.LogManager
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
-import org.springframework.stereotype.Controller
+import org.apache.logging.log4j.*
+import org.springframework.stereotype.*
 import org.springframework.web.bind.annotation.*
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
+import javax.servlet.http.*
 
 @Controller
 class UploadController {
@@ -21,20 +17,44 @@ class UploadController {
 
     @RequestMapping(value = ["/"], method = [RequestMethod.POST])
     @ResponseBody
-    fun saveImage(@ModelAttribute(value = "data") data: String, request: HttpServletRequest, response: HttpServletResponse): ResponseEntity<SaveImageResponse> {
+    fun saveImage(@ModelAttribute(value = "data") data: String, request: HttpServletRequest, response: HttpServletResponse): String {
         if (data.isBlank()) {
-//            log.error("Data is empty, nothing to save.")
-            throw RuntimeException("No data received.")
-//            response.status = HttpServletResponse.SC_BAD_REQUEST
-//            return "No data received."
+            log.error("Data is empty, nothing to save.")
+            response.status = HttpServletResponse.SC_BAD_REQUEST
+            return "No data received."
         }
 
-        if (data == "1") {
-            throw RuntimeException("Incorrect format of data.")
+        val resultUrl: String? = if (data.startsWith("http")) {
+            null
+        } else {
+            saveBase64ToFile(data)
         }
 
-//        log.info("Received: ${data.substring(0 until data.indexOf(","))}, total size: ${data.length}")
+        if (resultUrl == null) {
+            log.error("No file saved. Data: $data")
+            response.status = HttpServletResponse.SC_BAD_REQUEST
+            return "Unable to parse data."
+        }
 
-        return ResponseEntity(SaveImageResponse("https://orbu.net"), HttpStatus.OK)
+        return resultUrl
+    }
+
+    private fun saveBase64ToFile(data: String): String? {
+        val dataSequence = data.splitToSequence(":", ";", ",")
+
+        var fileType: String? = null
+        var base64Data: String? = null
+
+        val iterator = dataSequence.iterator()
+        while (iterator.hasNext()) {
+            when (iterator.next().toLowerCase()) {
+                "data" -> fileType = if (iterator.hasNext()) iterator.next() else null
+                "base64" -> base64Data = if (iterator.hasNext()) iterator.next() else null
+            }
+        }
+
+        TODO("handle result")
+
+        return null
     }
 }
