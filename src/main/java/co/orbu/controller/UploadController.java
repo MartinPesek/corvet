@@ -1,9 +1,7 @@
 package co.orbu.controller;
 
-import co.orbu.config.GongyuConfig;
 import co.orbu.utils.MimeTypeExtension;
 import co.orbu.utils.StringGenerator;
-import com.dropbox.core.v2.DbxClientV2;
 import com.microsoft.azure.storage.StorageException;
 import com.microsoft.azure.storage.blob.BlobProperties;
 import com.microsoft.azure.storage.blob.CloudBlobContainer;
@@ -19,17 +17,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ExecutorService;
 
 @Controller
 public class UploadController {
@@ -37,16 +35,10 @@ public class UploadController {
     private static final String CHARSET = "UTF-8";
     private static final Logger LOG = LogManager.getLogger(UploadController.class);
 
-    private final GongyuConfig gongyuConfig;
-    private final ExecutorService executorService;
-    private final DbxClientV2 dropboxClient;
     private final CloudBlobContainer storageService;
 
     @Autowired
-    public UploadController(GongyuConfig gongyuConfig, ExecutorService executorService, DbxClientV2 dropboxClient, CloudBlobContainer storageService) {
-        this.gongyuConfig = Objects.requireNonNull(gongyuConfig);
-        this.executorService = Objects.requireNonNull(executorService);
-        this.dropboxClient = Objects.requireNonNull(dropboxClient);
+    public UploadController(CloudBlobContainer storageService) {
         this.storageService = Objects.requireNonNull(storageService);
     }
 
@@ -143,9 +135,6 @@ public class UploadController {
         String extension = MimeTypeExtension.getExtensionFromMimeType(mimeType);
         String filename = StringGenerator.getRandomString() + extension;
 
-        String resultUrl = null;
-        boolean failedUpload = false;
-
         try {
             CloudBlockBlob blob = storageService.getBlockBlobReference(filename);
             blob.uploadFromByteArray(rawData, 0, rawData.length);
@@ -154,26 +143,12 @@ public class UploadController {
             properties.setContentType(mimeType);
             blob.uploadProperties();
 
-            resultUrl = blob.getUri().toASCIIString();
+            return blob.getUri().toASCIIString();
         } catch (URISyntaxException | StorageException | IOException e) {
             LOG.error("Unable to upload file to Azure.", e);
-            failedUpload = true;
         }
 
-        String failedFlag = failedUpload ? "_failed_" : "_";
-
-        executorService.submit(() -> {
-            try {
-                String dropboxFilename = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + failedFlag + filename;
-                dropboxClient.files()
-                        .uploadBuilder(gongyuConfig.getDropboxUploadDirectory() + dropboxFilename)
-                        .uploadAndFinish(new ByteArrayInputStream(rawData));
-            } catch (Exception e) {
-                LOG.error("Unable to upload file to Dropbox.", e);
-            }
-        });
-
-        return resultUrl;
+        return null;
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST)

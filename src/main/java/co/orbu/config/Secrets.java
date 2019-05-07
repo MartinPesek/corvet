@@ -14,12 +14,7 @@ import java.util.Objects;
 @Component
 class Secrets {
 
-    private String dropboxAccessKey;
     private String azureStorageConnectionString;
-
-    String getDropboxAccessKey() {
-        return dropboxAccessKey;
-    }
 
     String getAzureStorageConnectionString() {
         return azureStorageConnectionString;
@@ -48,7 +43,6 @@ class Secrets {
         }
 
         String vault = System.getenv("KEYVAULT_NAME");
-        dropboxAccessKey = getSecret(authResponse.getAccessToken(), vault, "DROPBOX-ACCESS-KEY");
         azureStorageConnectionString = getSecret(authResponse.getAccessToken(), vault, "AZURE-STORAGE-CONNECTION-STRING");
     }
 

@@ -1,7 +1,5 @@
 package co.orbu.config;
 
-import com.dropbox.core.DbxRequestConfig;
-import com.dropbox.core.v2.DbxClientV2;
 import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.StorageException;
 import com.microsoft.azure.storage.blob.BlobContainerPublicAccessType;
@@ -13,7 +11,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-import javax.annotation.PostConstruct;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.util.Objects;
@@ -30,18 +27,11 @@ public class GongyuConfig {
     @Value("${gongyu.maxFileDownloadSize}")
     private long maxFileDownloadSize;
 
-    private String dropboxUploadDirectory;
-
     private final Secrets secrets;
 
     @Autowired
     public GongyuConfig(Secrets secrets) {
         this.secrets = Objects.requireNonNull(secrets);
-    }
-
-    @PostConstruct
-    void init() {
-        dropboxUploadDirectory = "/" + storageContainerName + "/";
     }
 
     /**
@@ -55,24 +45,9 @@ public class GongyuConfig {
         return maxFileDownloadSize;
     }
 
-    /**
-     * Gets Dropbox's upload directory in a "/dir/" format.
-     *
-     * @return Upload directory path.
-     */
-    public String getDropboxUploadDirectory() {
-        return dropboxUploadDirectory;
-    }
-
     @Bean
     ExecutorService getExecutorService() {
         return Executors.newSingleThreadExecutor();
-    }
-
-    @Bean
-    DbxClientV2 getDropboxClient() {
-        DbxRequestConfig config = DbxRequestConfig.newBuilder("gongyu/1.0").withAutoRetryEnabled().build();
-        return new DbxClientV2(config, secrets.getDropboxAccessKey());
     }
 
     @Bean
