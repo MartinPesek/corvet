@@ -16,6 +16,6 @@ FROM adoptopenjdk/openjdk11-openj9:latest
 
 ARG revision
 
-COPY --from=build /build/target/gongyu-$revision.war ./gongyu.war
+COPY --from=build /build/target/gongyu-$revision.war ./corvet.war
 
-ENTRYPOINT ["java", "-Xss256k", "-jar", "/gongyu.war"]
+ENTRYPOINT ["java", "-Xss256k", "-jar", "/corvet.war"]
