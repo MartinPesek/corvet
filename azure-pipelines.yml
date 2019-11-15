@@ -23,7 +23,7 @@ stages:
               repository: '$(repository)'
               command: 'build'
               Dockerfile: '**/Dockerfile'
-              arguments: '--build-arg revision=$(Build.BuildNumber) --build-arg storageContainerName=$(storageContainerName) --build-args serverName=$(serverName) --build-arg sentryDsn=$(sentryDsn)'
+              arguments: '--build-arg revision=$(Build.BuildNumber) --build-arg storageContainerName=$(storageContainerName) --build-arg serverName=$(serverName) --build-arg sentryDsn=$(sentryDsn)'
               tags: |
                 $(Build.BuildNumber)
                 latest
